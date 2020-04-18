@@ -12,7 +12,8 @@ require_relative '../model/team.rb'
 #
 class TeamDetailParser
   def initialize(file)
-    @page = Nokogiri::HTML(open(file))
+    html_data = File.read(file)
+    @page = Nokogiri::HTML(html_data)
     @team_meta = @page.css('h1')
   end
 
@@ -22,17 +23,7 @@ class TeamDetailParser
     player_block.each do |tr|
       next if tr.css('td').empty?
 
-      name = tr.css('td')[4].css('a')[0].text
-      yob_index = tr.css('td')[4].text.index('(')
-
-      player = Player.new
-      player.lk = tr.css('td')[2].text
-      player.dtb_id = tr.css('td')[3].text.chop
-      player.lastname = name.split(',').first.strip
-      player.firstname = name.split(',')[1].strip
-      player.yob = tr.css('td')[4].text[yob_index + 1..yob_index + 4]
-      player.nationality = tr.css('td')[5].text.chop
-      player.season = season
+      player = map_to_player(tr)
       players.push player
     end
     players
@@ -54,6 +45,25 @@ class TeamDetailParser
   end
 
   private
+
+  def map_to_player(node)
+    name = node.css('td')[4].css('a')[0].text
+    yob_index = node.css('td')[4].text.index('(')
+
+    fill_player_data(node, name, yob_index)
+  end
+
+  def fill_player_data(node, name, yob)
+    player = Player.new
+    player.lk = node.css('td')[2].text
+    player.dtb_id = node.css('td')[3].text.chop
+    player.lastname = name.split(',').first.strip
+    player.firstname = name.split(',')[1].strip
+    player.yob = node.css('td')[4].text[yob + 1..yob + 4]
+    player.nationality = node.css('td')[5].text.chop
+    player.season = season
+    player
+  end
 
   def season
     team_name = @team_meta.text.split(')')[1].lstrip
