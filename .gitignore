@@ -1,0 +1,5 @@
+# coverage reports
+coverage
+
+# sqlite dbs
+db/*.sqlite3
