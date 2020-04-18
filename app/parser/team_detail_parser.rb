@@ -10,24 +10,24 @@ class TeamDetailParser
     @team_meta = @page.css('h1')
   end
 
-  def get_players
+  def players
     @page.css('table.result-set')[2].css('tr')
   end
 
-  def get_club_name
+  def club_name
     @team_meta.text.split('(')[0].lstrip.chop
   end
 
-  def get_club_id
+  def club_id
     @team_meta.text.split('(')[1][0..6]
   end
 
-  def get_team_name
+  def team_name
     team_name = @team_meta.text.split(')')[1].lstrip
     team_name.split(',')[0].strip
   end
 
-  def get_season
+  def season
     team_name = @team_meta.text.split(')')[1].lstrip
     team_name.split(',')[1].strip.reverse.chop.reverse
   end
