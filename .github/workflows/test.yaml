@@ -13,27 +13,15 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: .ruby-version
-        
-    - uses: actions/cache@v1
-      with:
-        path: vendor/bundle
-        key: bundle-use-ruby-ubuntu-latest-${{ hashFiles('.ruby-version') }}-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          bundle-use-ruby-ubuntu-latest-${{ hashFiles('.ruby-version') }}-
     
     - name: Install build dependencies
       run: |
-        gem install bundler:2.1.4
+        gem install bundler:2.1.4 simplecov:0.17.1 minitest minitest-reporters
 
     - name: Bundle install
       run: |
-        bundle config path vendor/bundle
         bundle config set with 'test'
         bundle install --jobs 4 --retry 3
-
-    - name: Run tests
-      run: |
-        rake test
 
     - name: Test & publish code coverage
       uses: paambaati/codeclimate-action@v2.5.7
