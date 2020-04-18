@@ -23,12 +23,13 @@ jobs:
     
     - name: Install build dependencies
       run: |
-        gem install rake bundler:2.1.4
+        gem install bundler:2.1.4
 
     - name: Bundle install
       run: |
         bundle config path vendor/bundle
-        bundle install --with test --jobs 4 --retry 3
+        bundle config set with 'test'
+        bundle install --jobs 4 --retry 3
 
     - name: Run tests
       run: |

@@ -4,7 +4,7 @@ source 'https://rubygems.org' do
   group :test do
     gem 'minitest'
     gem 'minitest-reporters'
-    gem 'simplecov', require: false
+    gem 'simplecov', '0.17.1'
   end
   gem 'nokogiri'
   gem 'rake'
