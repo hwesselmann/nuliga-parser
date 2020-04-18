@@ -3,7 +3,13 @@
 require 'nokogiri'
 require 'open-uri'
 
+require_relative '../model/player.rb'
+require_relative '../model/club.rb'
+require_relative '../model/team.rb'
+
+#
 # class for parsing a team-detail page
+#
 class TeamDetailParser
   def initialize(file)
     @page = Nokogiri::HTML(open(file))
@@ -11,21 +17,43 @@ class TeamDetailParser
   end
 
   def players
-    @page.css('table.result-set')[2].css('tr')
+    players = []
+    player_block = @page.css('table.result-set')[2].css('tr')
+    player_block.each do |tr|
+      next if tr.css('td').empty?
+
+      name = tr.css('td')[4].css('a')[0].text
+      yob_index = tr.css('td')[4].text.index('(')
+
+      player = Player.new
+      player.lk = tr.css('td')[2].text
+      player.dtb_id = tr.css('td')[3].text.chop
+      player.lastname = name.split(',').first.strip
+      player.firstname = name.split(',')[1].strip
+      player.yob = tr.css('td')[4].text[yob_index + 1..yob_index + 4]
+      player.nationality = tr.css('td')[5].text.chop
+      player.season = season
+      players.push player
+    end
+    players
   end
 
-  def club_name
-    @team_meta.text.split('(')[0].lstrip.chop
+  def club
+    club = Club.new
+    club.name = @team_meta.text.split('(')[0].lstrip.chop
+    club.id = @team_meta.text.split('(')[1][0..6]
+    club
   end
 
-  def club_id
-    @team_meta.text.split('(')[1][0..6]
-  end
-
-  def team_name
+  def team
+    team = Team.new
     team_name = @team_meta.text.split(')')[1].lstrip
-    team_name.split(',')[0].strip
+    team.name = team_name.split(',')[0].strip
+    team.season = season
+    team
   end
+
+  private
 
   def season
     team_name = @team_meta.text.split(')')[1].lstrip
@@ -33,23 +61,9 @@ class TeamDetailParser
   end
 end
 
-#result = parser.get_players(input)
-#result.each do |tr|
-#  next if tr.css('td').empty?
-
 #  puts 'Rang: ' + tr.css('td')[0].text.strip
 #  puts 'Mannschaft: ' + tr.css('td')[1].text.strip
-#  puts 'LK: ' + tr.css('td')[2].text
-#  puts 'DTB-ID: ' + tr.css('td')[3].text.chop
-#  name = tr.css('td')[4].css('a')[0].text
-#  puts 'Nachname: ' + name.split(',')[0]
-#  puts 'Vorname: ' + name.split(',')[1]
-#  yob_index = tr.css('td')[4].text.index('(')
-#  puts 'Jahrgang: ' + tr.css('td')[4].text[yob_index + 1..yob_index + 4]
-#  puts 'Nationalitaet: ' + tr.css('td')[5].text.chop
 #  puts 'Spielgemeinschaft: ' + tr.css('td')[6].text.chop
 #  puts 'Einzel: ' + tr.css('td')[7].text
 #  puts 'Doppel: ' + tr.css('td')[8].text
 #  puts 'Gesamt: ' + tr.css('td')[9].text
-#  puts '----------------------------------------------'
-#end
