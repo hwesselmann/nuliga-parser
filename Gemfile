@@ -8,6 +8,4 @@ source 'https://rubygems.org' do
   end
   gem 'nokogiri'
   gem 'rake'
-  gem 'sequel'
-  gem 'sqlite3'
 end
