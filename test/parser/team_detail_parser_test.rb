@@ -21,14 +21,29 @@ class TeamDetailParserTest < Minitest::Test
     players = @parser.players
     assert_equal(16, players.size)
     assert_instance_of(Player, players.fetch(3))
+  end
+
+  def test_player_personal_data
+    players = @parser.players
     assert_equal('W*****n', players.fetch(0).lastname)
     assert_equal('N*****h', players.fetch(0).firstname)
     assert_equal('1234', players.fetch(2).yob)
+  end
+
+  def test_player_tennis_data
+    players = @parser.players
     assert_equal('1******1', players.fetch(15).dtb_id)
     assert_equal('-', players.fetch(12).lk)
     assert_equal('LK23', players.fetch(11).lk)
     assert_equal('GER', players.fetch(11).nationality)
+  end
+
+  def test_player_team_data
+    players = @parser.players
     assert_equal('Sommer 2017', players.fetch(11).season)
+    assert_equal('3:2', players.fetch(0).singles)
+    assert_equal('3:2', players.fetch(0).doubles)
+    assert_equal('1', players.fetch(0).team_rank)
   end
 
   def test_if_teamname_is_correct

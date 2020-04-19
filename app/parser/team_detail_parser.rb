@@ -54,14 +54,19 @@ class TeamDetailParser
   end
 
   def fill_player_data(node, name, yob)
+    data = node.css('td')
     player = Player.new
-    player.lk = node.css('td')[2].text
-    player.dtb_id = node.css('td')[3].text.chop
+    player.lk = data[2].text
+    player.dtb_id = data[3].text.chop
     player.lastname = name.split(',').first.strip
     player.firstname = name.split(',')[1].strip
-    player.yob = node.css('td')[4].text[yob + 1..yob + 4]
-    player.nationality = node.css('td')[5].text.chop
+    player.yob = data[4].text[yob + 1..yob + 4]
+    player.nationality = data[5].text.chop
     player.season = season
+    player.team = team.name
+    player.team_rank = data[0].text.strip
+    player.singles = data[7].text
+    player.doubles = data[8].text
     player
   end
 
@@ -70,10 +75,3 @@ class TeamDetailParser
     team_name.split(',')[1].strip.reverse.chop.reverse
   end
 end
-
-#  puts 'Rang: ' + tr.css('td')[0].text.strip
-#  puts 'Mannschaft: ' + tr.css('td')[1].text.strip
-#  puts 'Spielgemeinschaft: ' + tr.css('td')[6].text.chop
-#  puts 'Einzel: ' + tr.css('td')[7].text
-#  puts 'Doppel: ' + tr.css('td')[8].text
-#  puts 'Gesamt: ' + tr.css('td')[9].text

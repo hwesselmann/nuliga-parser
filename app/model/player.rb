@@ -5,5 +5,5 @@
 #
 class Player
   attr_accessor :lastname, :firstname, :dtb_id, :lk, :nationality
-  attr_accessor :yob, :season
+  attr_accessor :yob, :season, :team, :team_rank, :singles, :doubles
 end
