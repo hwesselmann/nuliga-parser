@@ -14,7 +14,6 @@ class TeamDetailParser
   def initialize(file)
     html_data = File.read(file)
     @page = Nokogiri::HTML(html_data)
-    @team_meta = @page.css('h1')
   end
 
   def players
@@ -31,14 +30,14 @@ class TeamDetailParser
 
   def club
     club = Club.new
-    club.name = @team_meta.text.split('(')[0].lstrip.chop
-    club.id = @team_meta.text.split('(')[1][0..6]
+    club.name = @page.css('h1').text.split('(')[0].lstrip.chop
+    club.id = @page.css('h1').text.split('(')[1][0..6]
     club
   end
 
   def team
     team = Team.new
-    team_name = @team_meta.text.split(')')[1].lstrip
+    team_name = @page.css('h1').text.split(')')[1].lstrip
     team.name = team_name.split(',')[0].strip
     team.season = season
     team
@@ -71,7 +70,7 @@ class TeamDetailParser
   end
 
   def season
-    team_name = @team_meta.text.split(')')[1].lstrip
+    team_name = @page.css('h1').text.split(')')[1].lstrip
     team_name.split(',')[1].strip.reverse.chop.reverse
   end
 end
